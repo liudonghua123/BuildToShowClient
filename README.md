@@ -1,10 +1,8 @@
-Navigation Drawer ViewPager ActionBarCompat
+Building To Show
 ===========================================
 
-Example still not be 100% but the picture shows how be getting the layout.
-Layout made ​​based on Google Play app.
+健身助手客户端
+后期不断更新。。。
 
-O Exemplo ainda não estar 100% mas a imagem mostra como estar ficando o layout.
-Layout feito com base no app Google Play.
-
-<img src="https://raw.githubusercontent.com/rudsonlive/Navigation-Drawer-ViewPager-ActionBarCompat/master/Navigation.png"> </img>
+项目初始框架界面如下图所示
+<img src="https://raw.githubusercontent.com/liudonghua123/BuildToShowClient/master/Preview.png"> </img>
