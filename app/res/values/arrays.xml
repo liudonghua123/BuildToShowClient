@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="nav_menu_items">
+        <item>我的行程</item>
+        <item>我的资料</item>
+        <item>我的好友</item>
+        <item>设置</item>
+        <item>关于我们</item>
+    </string-array>   
+</resources>
