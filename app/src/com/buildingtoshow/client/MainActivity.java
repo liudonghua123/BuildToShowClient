@@ -1,5 +1,5 @@
 
-package com.buildingtoshow.client.navigationviewpagerliveo;
+package com.buildingtoshow.client;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -23,9 +23,11 @@ import com.buildingtoshow.client.fragments.ViewPagerFragment;
 import com.buildingtoshow.client.utils.Constant;
 import com.buildingtoshow.client.utils.Menus;
 import com.buildingtoshow.client.utils.Utils;
-import com.buildingtoshow.client.R;
 
-public class NavigationMain extends ActionBarActivity{
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+public class MainActivity extends ActionBarActivity{
 		
     private int lastPosition = 0;
 	private ListView listDrawer;    
@@ -79,7 +81,8 @@ public class NavigationMain extends ActionBarActivity{
 	    }else{
 	    	setLastPosition(lastPosition); 
 	    	setFragmentList(lastPosition);	    	
-	    }			             
+	    }
+        Crouton.makeText(this, "hello", Style.INFO).show();
 	}
 	
 	@Override
@@ -236,7 +239,7 @@ public class NavigationMain extends ActionBarActivity{
 
 	public void setTitleFragments(int position){	
 		setIconActionBar(Utils.iconNavigation[position]);
-		setSubtitleActionBar(Utils.getTitleItem(NavigationMain.this, position));				
+		setSubtitleActionBar(Utils.getTitleItem(MainActivity.this, position));
 	}
 
 	public int getCounterItemDownloads() {

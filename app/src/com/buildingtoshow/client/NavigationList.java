@@ -1,4 +1,4 @@
-package com.buildingtoshow.client.navigationviewpagerliveo;
+package com.buildingtoshow.client;
 
 import android.content.Context;
 import com.buildingtoshow.client.adapter.NavigationAdapter;

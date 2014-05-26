@@ -11,7 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.buildingtoshow.client.navigationviewpagerliveo.NavigationMain;
+
+import com.buildingtoshow.client.MainActivity;
 import com.buildingtoshow.client.R;
 
 public class NavigationAdapter extends ArrayAdapter<NavigationItemAdapter> {
@@ -126,7 +127,7 @@ public class NavigationAdapter extends ArrayAdapter<NavigationItemAdapter> {
 				if (item.counter > 0) {
 					holder.counter.setVisibility(View.VISIBLE);
 					
-					int counter = ((NavigationMain)getContext()).getCounterItemDownloads();
+					int counter = ((MainActivity)getContext()).getCounterItemDownloads();
 					holder.counter.setText("" + counter);
 				} else {
 					holder.counter.setVisibility(View.GONE);

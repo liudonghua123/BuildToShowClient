@@ -1,13 +1,32 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.+'
+    }
+}
+
 apply plugin: 'android'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile "com.android.support:appcompat-v7:18.0.+"
+    compile project(':android-wizardpager')
+    compile 'com.android.support:appcompat-v7:18.0.+'
+    // Context sensitive notifications for Android
+    // https://github.com/keyboardsurfer/Crouton
+    compile 'de.keyboardsurfer.android.widget:crouton:1.8.4'
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion '19.0.3'
 
     sourceSets {
         main {
