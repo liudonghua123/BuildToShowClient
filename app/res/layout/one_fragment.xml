@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:geekui="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
@@ -12,7 +13,8 @@
         android:contentDescription="@string/clear"
         android:src="@drawable/ic_liveo" />
 
-    <TextView
+    <!--com.mobsandgeeks.ui.TypefaceTextView geekui:customTypeface="fonts/AvenirNextLTPro-Cn.otf" -->
+    <com.mobsandgeeks.ui.TypefaceTextView
         android:id="@+id/txtFragmentOne"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -20,6 +22,7 @@
         android:gravity="center"
         android:layout_marginTop="16dp"
         android:text="@string/clear"
+        geekui:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

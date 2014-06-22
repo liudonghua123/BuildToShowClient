@@ -82,7 +82,8 @@ public class MainActivity extends ActionBarActivity{
 	    	setLastPosition(lastPosition); 
 	    	setFragmentList(lastPosition);	    	
 	    }
-        Crouton.makeText(this, "hello", Style.INFO).show();
+        // Simple Crouton usage
+        // Crouton.makeText(this, "hello", Style.INFO).show();
 	}
 	
 	@Override
