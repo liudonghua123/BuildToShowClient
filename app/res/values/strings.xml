@@ -24,6 +24,18 @@
     <string name="fragment_shop_apps">This is ShopApps</string>
     <string name="fragment_tab_one">This is One</string>    
     <string name="fragment_tab_two">This is Two</string>
-    <string name="fragment_tab_three">This is Three</string>  
-    
+    <string name="fragment_tab_three">This is Three</string>
+
+
+    <!-- trace_map -->
+    <string name="trace_map_distance" translatable="false">距离</string>
+    <string name="trace_map_distance_default_value" translatable="false">0</string>
+    <string name="trace_map_distance_unit" translatable="false">KM</string>
+    <string name="trace_map_elapsed_time" translatable="false">持续时间</string>
+    <string name="trace_map_elapsed_time_default_value" translatable="false">0</string>
+    <string name="trace_map_speed" translatable="false">速度(m/s)</string>
+    <string name="trace_map_speed_default_value" translatable="false">0</string>
+    <string name="trace_map_start" translatable="false">开始</string>
+    <string name="trace_map_end" translatable="false">结束</string>
+
 </resources >

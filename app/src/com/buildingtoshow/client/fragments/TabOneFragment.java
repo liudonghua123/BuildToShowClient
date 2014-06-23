@@ -11,13 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.MapView;
 import com.buildingtoshow.client.R;
 import com.buildingtoshow.client.utils.Menus;
+//import com.google.android.gms.maps.GoogleMap;
+//import com.google.android.gms.maps.MapView;
+//import com.google.android.gms.maps.model.LatLng;
+//import com.google.android.gms.maps.model.MarkerOptions;
 
 public class TabOneFragment extends Fragment{
-
-	private TextView txtFragmentone;
+    private View mRootView;
+    private MapView mMapView;
+    //private GoogleMap mMap;
+    private BaiduMap mMap;
 	    
     public static TabOneFragment newInstance() {
         TabOneFragment fragment = new TabOneFragment();
@@ -27,13 +35,15 @@ public class TabOneFragment extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-			
-		View rootView = inflater.inflate(R.layout.one_fragment, container, false);
-		txtFragmentone = (TextView) rootView.findViewById(R.id.txtFragmentOne);
-		txtFragmentone.setText(R.string.fragment_tab_one);
 
-		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));		
-		return rootView;
+        mRootView = inflater.inflate(R.layout.one_fragment, container, false);
+        mMapView = (MapView) mRootView.findViewById(R.id.map);
+        //For Google Map
+        //mMapView.onCreate(savedInstanceState);
+
+        setUpMapIfNeeded();
+        mRootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
+		return mRootView;
 	}
 			
 	@Override
@@ -58,7 +68,55 @@ public class TabOneFragment extends Fragment{
 	    
 	    ((EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text))
         .setHintTextColor(getResources().getColor(R.color.white));		
-	}	
+	}
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+
+        setUpMapIfNeeded();
+    }
+
+    private void setUpMapIfNeeded() {
+        if (mMap == null) {
+            mMap = ((MapView) mRootView.findViewById(R.id.map)).getMap();
+            if (mMap != null) {
+                setUpMap();
+            }
+        }
+    }
+
+    private void setUpMap() {
+//        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+//        mMap.setPadding(0, 0, 0, 150);
+        mMap.setMyLocationEnabled(true);
+
+    }
+
+    @Override
+    public void onPause() {
+        mMapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mMapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+//        mMapView.onLowMemory();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+//        mMapView.onSaveInstanceState(outState);
+    }
 }
 
 

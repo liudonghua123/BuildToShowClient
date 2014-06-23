@@ -24,8 +24,8 @@ import com.buildingtoshow.client.utils.Constant;
 import com.buildingtoshow.client.utils.Menus;
 import com.buildingtoshow.client.utils.Utils;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+//import de.keyboardsurfer.android.widget.crouton.Crouton;
+//import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class MainActivity extends ActionBarActivity{
 		

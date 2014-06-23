@@ -1,28 +1,149 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:geekui="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <ImageView
-        android:id="@+id/imgLiveo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="121dp"
-        android:contentDescription="@string/clear"
-        android:src="@drawable/ic_liveo" />
-
-    <!--com.mobsandgeeks.ui.TypefaceTextView geekui:customTypeface="fonts/AvenirNextLTPro-Cn.otf" -->
-    <com.mobsandgeeks.ui.TypefaceTextView
-        android:id="@+id/txtFragmentOne"
+    <LinearLayout
+        android:id="@+id/trace_map_header"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imgLiveo"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:text="@string/clear"
-        geekui:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_height="150dp"
+        android:padding="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="30dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/trace_map_distance" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.mobsandgeeks.ui.TypefaceTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/trace_map_distance_default_value"
+                    app:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
+                    android:textSize="100dp"
+                    android:id="@+id/trace_map_text_view_distance" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|bottom"
+                    android:textSize="50dp"
+                    android:text="@string/trace_map_distance_unit" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/default_divider_color"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="120dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:gravity="center_vertical"
+                android:text="@string/trace_map_elapsed_time" />
+
+            <com.mobsandgeeks.ui.TypefaceTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trace_map_elapsed_time_default_value"
+                app:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
+                android:textSize="35dp"
+                android:id="@+id/trace_map_text_view_elapsed_time" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:gravity="center_vertical"
+                android:text="@string/trace_map_speed" />
+
+            <com.mobsandgeeks.ui.TypefaceTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/trace_map_speed_default_value"
+                app:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
+                android:textSize="35dp"
+                android:id="@+id/trace_map_text_view_speed" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map"
+        android:layout_below="@id/trace_map_header"
+        android:layout_width="match_parent"
+        app:cameraBearing="0"
+        app:cameraTargetLat="24.822910"
+        app:cameraTargetLng="102.853091"
+        app:cameraTilt="0"
+        app:cameraZoom="15"
+        app:mapType="normal"
+        app:uiCompass="true"
+        app:uiZoomControls="true"
+        app:uiZoomGestures="true"
+        android:layout_height="match_parent"/>
+    -->
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/map"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/trace_map_header"
+        android:clickable="true" />
+
+
+    <ViewSwitcher
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentBottom="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:text="@string/trace_map_start"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:text="@string/trace_map_end"/>
+        </RelativeLayout>
+    </ViewSwitcher>
 
 </RelativeLayout>
