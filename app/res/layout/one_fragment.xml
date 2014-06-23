@@ -98,7 +98,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!--
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_below="@id/trace_map_header"
@@ -113,13 +112,14 @@
         app:uiZoomControls="true"
         app:uiZoomGestures="true"
         android:layout_height="match_parent"/>
-    -->
+    <!--
     <com.baidu.mapapi.map.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/trace_map_header"
         android:clickable="true" />
+    -->
 
 
     <ViewSwitcher

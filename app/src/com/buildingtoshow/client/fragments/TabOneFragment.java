@@ -12,20 +12,23 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.MapView;
 import com.buildingtoshow.client.R;
+
+//import com.baidu.mapapi.map.BaiduMap;
+//import com.baidu.mapapi.map.MapView;
+//import com.buildingtoshow.client.R;
+//import com.buildingtoshow.client.utils.Menus;
 import com.buildingtoshow.client.utils.Menus;
-//import com.google.android.gms.maps.GoogleMap;
-//import com.google.android.gms.maps.MapView;
-//import com.google.android.gms.maps.model.LatLng;
-//import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class TabOneFragment extends Fragment{
     private View mRootView;
     private MapView mMapView;
-    //private GoogleMap mMap;
-    private BaiduMap mMap;
+    private GoogleMap mMap;
+    //private BaiduMap mMap;
 	    
     public static TabOneFragment newInstance() {
         TabOneFragment fragment = new TabOneFragment();
@@ -38,8 +41,7 @@ public class TabOneFragment extends Fragment{
 
         mRootView = inflater.inflate(R.layout.one_fragment, container, false);
         mMapView = (MapView) mRootView.findViewById(R.id.map);
-        //For Google Map
-        //mMapView.onCreate(savedInstanceState);
+        mMapView.onCreate(savedInstanceState);
 
         setUpMapIfNeeded();
         mRootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
@@ -89,7 +91,7 @@ public class TabOneFragment extends Fragment{
 
     private void setUpMap() {
 //        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-//        mMap.setPadding(0, 0, 0, 150);
+        mMap.setPadding(0, 0, 0, 150);
         mMap.setMyLocationEnabled(true);
 
     }
@@ -109,13 +111,13 @@ public class TabOneFragment extends Fragment{
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-//        mMapView.onLowMemory();
+        mMapView.onLowMemory();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        mMapView.onSaveInstanceState(outState);
+        mMapView.onSaveInstanceState(outState);
     }
 }
 
