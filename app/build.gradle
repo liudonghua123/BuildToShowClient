@@ -54,7 +54,28 @@ android {
     defaultConfig {}
     productFlavors {
     }
+    signingConfigs {
+        debug {
+            storeFile file("../debug.keystore")
+        }
+
+        release {
+            storeFile file("../debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
+
+        release {
+            signingConfig signingConfigs.release
+            debuggable false
+            zipAlign true
+        }
     }
 }
 
