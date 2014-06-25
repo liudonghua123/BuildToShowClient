@@ -20,6 +20,8 @@ dependencies {
     // Context sensitive notifications for Android
     // https://github.com/keyboardsurfer/Crouton
     //compile 'de.keyboardsurfer.android.widget:crouton:1.8.4'
+    //compile 'com.twotoasters.jazzylistview:library:1.0.0'
+    compile project(':android-jazzylistview')
     compile 'com.google.android.gms:play-services:4.3.23'
     //compile fileTree(dir: "$buildDir/native-libs", include: 'native-libs.jar')
 }

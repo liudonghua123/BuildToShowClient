@@ -1,1 +1,1 @@
-include ':app', ':android-wizardpager', ':android-typeface-textview'
+include ':app', ':android-wizardpager', ':android-typeface-textview', ':android-jazzylistview'

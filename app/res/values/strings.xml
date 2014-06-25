@@ -16,9 +16,9 @@
     <string name="titulo_user">LiuDonghua</string>
     <string name="subtitulo_user">liudonghua123@gmail.com</string>
 
-    <string name="tab_one">Tab One</string>
-    <string name="tab_two">Tab Two</string>
-    <string name="tab_three">Tab Three</string>  
+    <string name="tab_one">地图</string>
+    <string name="tab_two">历史</string>
+    <string name="tab_three">周边</string>
     
     <string name="fragment_my_apps">This is MyApps</string>    
     <string name="fragment_shop_apps">This is ShopApps</string>
@@ -30,12 +30,19 @@
     <!-- trace_map -->
     <string name="trace_map_distance" translatable="false">距离</string>
     <string name="trace_map_distance_default_value" translatable="false">0</string>
-    <string name="trace_map_distance_unit" translatable="false">KM</string>
+    <string name="trace_map_distance_unit" translatable="false">M</string>
     <string name="trace_map_elapsed_time" translatable="false">持续时间</string>
     <string name="trace_map_elapsed_time_default_value" translatable="false">0</string>
     <string name="trace_map_speed" translatable="false">速度(m/s)</string>
     <string name="trace_map_speed_default_value" translatable="false">0</string>
     <string name="trace_map_start" translatable="false">开始</string>
     <string name="trace_map_end" translatable="false">结束</string>
+    <string name="trace_map_need_save" translatable="false">是否要保存这次记录？</string>
+    <string name="trace_map_save" translatable="false">保存记录</string>
+
+
+    <string name="common_trace_distance" translatable="false">距离</string>
+    <string name="common_trace_total_time" translatable="false">总时间</string>
+    <string name="common_trace_average_speed" translatable="false">平均速度</string>
 
 </resources >

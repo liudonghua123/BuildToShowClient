@@ -18,6 +18,7 @@ import com.buildingtoshow.client.utils.Utils;
 
 public class ViewPagerFragment extends Fragment{
 	private List<SamplePagerItem> mTabs = new ArrayList<SamplePagerItem>();
+    private ViewPagerAdapter mViewPagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,9 @@ public class ViewPagerFragment extends Fragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
     	ViewPager mViewPager = (ViewPager) view.findViewById(R.id.mPager);
     	
-    	mViewPager.setOffscreenPageLimit(3); 
-        mViewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager(), mTabs));
+    	mViewPager.setOffscreenPageLimit(3);
+        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), mTabs);
+        mViewPager.setAdapter(mViewPagerAdapter);
 
         SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.mTabs);
         mSlidingTabLayout.setBackgroundResource(R.color.white);
@@ -54,6 +56,25 @@ public class ViewPagerFragment extends Fragment{
             @Override
             public int getDividerColor(int position) {
                 return mTabs.get(position).getDividerColor();
+            }
+        });
+
+        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if(position == 1) {
+                    ((TraceHistoryFragment)(mViewPagerAdapter.getItem(position))).updateTraceHisotory();
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
     }
