@@ -32,12 +32,13 @@ public class TraceRecordHelper {
         return mTraceRecordHelper;
     }
 
-    public void insert(Date startDateTime, int distance, int totalTime, List<Location> locations) {
+    public void insert(Date startDateTime, int distance, int totalTime, List<Location> locations, String snapshotPath) {
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.TRACE_RECORD_START_DATETIME, Utils.formatDateTime(startDateTime));
         cv.put(DBHelper.TRACE_RECORD_DISTANCE, distance);
         cv.put(DBHelper.TRACE_RECORD_TOTAL_TIME, totalTime);
         cv.put(DBHelper.TRACE_RECORD_LOCATIONS, Utils.locationsToString(locations));
+        cv.put(DBHelper.TRACE_RECORD_SNAPSHOT_PATH, snapshotPath);
         database.insert(DBHelper.TABLE_TRACE_RECORD, null, cv);
     }
 

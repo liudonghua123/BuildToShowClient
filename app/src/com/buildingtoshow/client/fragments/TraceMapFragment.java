@@ -2,6 +2,7 @@ package com.buildingtoshow.client.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -12,7 +13,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
-import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,7 +35,6 @@ import com.buildingtoshow.client.utils.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -42,6 +42,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,6 +56,8 @@ import java.util.Locale;
 //import com.buildingtoshow.client.utils.Menus;
 
 public class TraceMapFragment extends Fragment implements LocationListener, OnClickListener {
+
+    private static final String LOG_TAG = "TraceMapFragment";
 
     // 初始化为空的列表
     private List<Location> mLocations = new ArrayList<Location>();
@@ -289,7 +293,7 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
                 mLastLocation = location;
 
                 // 更新UI
-                mTextViewDistance.setText(Integer.toString((int)mCurrentDistance));
+                mTextViewDistance.setText(Integer.toString((int) mCurrentDistance));
                 mTextViewSpeed.setText(Utils.formatFloatNumber(mCurrentSpeed));
             }
 
@@ -365,8 +369,26 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                // 保存地图快照至图片
+                final String snapshotFilePath = Utils.generateMapSnapshotFilePath(TraceMapFragment.this.getActivity());
+                mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                    public void onMapLoaded() {
+                        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
+                            public void onSnapshotReady(Bitmap bitmap) {
+                                // Write image to disk
+                                FileOutputStream out = null;
+                                try {
+                                    out = new FileOutputStream(snapshotFilePath);
+                                } catch (FileNotFoundException e) {
+                                    Log.e(LOG_TAG, e.getMessage());
+                                }
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                            }
+                        });
+                    }
+                });
                 mTraceRecordHelper = TraceRecordHelper.getInstance(TraceMapFragment.this.getActivity());
-                mTraceRecordHelper.insert(mStartDate, (int)mCurrentDistance, (int)mCurrentElapsedTimeInSeconds, mLocations);
+                mTraceRecordHelper.insert(mStartDate, (int)mCurrentDistance, (int)mCurrentElapsedTimeInSeconds, mLocations, snapshotFilePath);
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

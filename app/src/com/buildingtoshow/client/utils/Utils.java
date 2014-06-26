@@ -1,24 +1,33 @@
 package com.buildingtoshow.client.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 
 import com.buildingtoshow.client.R;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class Utils {
 
     private static DecimalFormat decimalFormat = new DecimalFormat("#.##");
     private static DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static DateFormat simpleDateFormatForSnapshotFileName = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
     private static final String LATLNG_INNER_DELIMITER = ",";
     private static final String LATLNG_OUTTER_DELIMITER = ";";
 
@@ -149,5 +158,26 @@ public class Utils {
             sb.append(iter.next().toString());
         }
         return sb.toString();
+    }
+
+    public static String generateMapSnapshotFilePath(Context context) {
+        Date currentDate = Calendar.getInstance(Locale.getDefault()).getTime();
+        String fileName = simpleDateFormatForSnapshotFileName.format(currentDate);
+        File snapshotFilePath = new File(context.getExternalCacheDir(), fileName + ".png");
+        return snapshotFilePath.getAbsolutePath();
+    }
+
+    public static Bitmap getImageBitmapFromFilePath(String snapshotPath) {
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(snapshotPath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        //图片的长宽都是原来的1/8
+        //options.inSampleSize = 8;
+        BufferedInputStream bis = new BufferedInputStream(fileInputStream);
+        return BitmapFactory.decodeStream(bis, null, options);
     }
 }

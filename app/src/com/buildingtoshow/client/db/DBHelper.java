@@ -20,6 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TRACE_RECORD_DISTANCE = "distance";
     public static final String TRACE_RECORD_TOTAL_TIME = "total_time";
     public static final String TRACE_RECORD_LOCATIONS = "locations";
+    public static final String TRACE_RECORD_SNAPSHOT_PATH = "snapshot";
 
     // TABLE CREATION STATEMENT
     private static final String CREATE_TABLE = "create table " + TABLE_TRACE_RECORD + "("
@@ -27,7 +28,8 @@ public class DBHelper extends SQLiteOpenHelper {
             + TRACE_RECORD_START_DATETIME + " DATETIME NOT NULL, "
             + TRACE_RECORD_DISTANCE + " INTEGER NOT NULL, "
             + TRACE_RECORD_TOTAL_TIME + " INTEGER NOT NULL, "
-            + TRACE_RECORD_LOCATIONS + " TEXT NOT NULL "
+            + TRACE_RECORD_LOCATIONS + " TEXT NOT NULL, "
+            + TRACE_RECORD_SNAPSHOT_PATH + " TEXT NOT NULL "
             + ");";
 
     public DBHelper(Context context) {

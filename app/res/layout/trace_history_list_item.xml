@@ -6,6 +6,7 @@
     android:orientation="horizontal"
     android:padding="5dip">
 
+    <!--
     <com.google.android.gms.maps.MapView
         android:id="@+id/trace_history_list_item_map"
         android:layout_width="200dip"
@@ -17,89 +18,102 @@
         app:uiCompass="false"
         app:uiZoomControls="false"
         app:uiZoomGestures="false"/>
+        -->
+    <ImageView
+        android:id="@+id/trace_history_list_item_snapshot"
+        android:layout_width="200dip"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"/>
 
     <LinearLayout
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dip"
-                    android:textSize="15dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/common_trace_distance" />
-
-                <TextView
-                    android:id="@+id/trace_history_list_item_text_view_distance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="25dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="0" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dip"
-                    android:textSize="15dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/common_trace_total_time" />
-
-                <TextView
-                    android:id="@+id/trace_history_list_item_text_view_total_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="25dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="0" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dip"
-                    android:textSize="15dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/common_trace_average_speed" />
-
-                <TextView
-                    android:id="@+id/trace_history_list_item_text_view_average_speed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="25dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="0" />
-            </TableRow>
-        </TableLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textSize="15dp"
-            android:layout_gravity="center_vertical"
-            android:text="2014-06-25 25:25:25"
-            android:id="@+id/trace_history_list_item_text_view_start_date_time" />
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="10dip"
+                        android:text="@string/common_trace_distance"
+                        android:textSize="15dp" />
+
+                    <TextView
+                        android:id="@+id/trace_history_list_item_text_view_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="0"
+                        android:textSize="25dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="10dip"
+                        android:text="@string/common_trace_total_time"
+                        android:textSize="15dp" />
+
+                    <TextView
+                        android:id="@+id/trace_history_list_item_text_view_total_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="0"
+                        android:textSize="25dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="10dip"
+                        android:text="@string/common_trace_average_speed"
+                        android:textSize="15dp" />
+
+                    <TextView
+                        android:id="@+id/trace_history_list_item_text_view_average_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="0"
+                        android:textSize="25dp" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/trace_history_list_item_text_view_start_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:text="2014-06-25 25:25:25"
+                android:textSize="15dp" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
