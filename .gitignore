@@ -31,3 +31,5 @@ proguard/
 .classpath
 .project
 
+# Mac meta fils
+.DS_Store
