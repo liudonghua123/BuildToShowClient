@@ -22,9 +22,5 @@ allprojects {
 // http://www.gradle.org/docs/current/userguide/gradle_wrapper.html
 // gradle wrapper
 task wrapper(type: Wrapper) {
-<<<<<<< HEAD
     gradleVersion = '2.2.1'
-=======
-    gradleVersion = '2.1'
->>>>>>> af8d90063065c3e88afd91963a25fb09afd2ad6f
 }
