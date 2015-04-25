@@ -12,14 +12,14 @@ import android.widget.TextView;
 import com.buildingtoshow.client.R;
 import com.buildingtoshow.client.utils.Menus;
 
-public class TabThreeFragment extends Fragment{
+public class TraceFriendFragment extends Fragment{
 	
 	private TextView txtFragmentThree;
 	
-    public static TabThreeFragment newInstance() {
+    public static TraceFriendFragment newInstance() {
         Bundle bundle = new Bundle();
 
-        TabThreeFragment fragment = new TabThreeFragment();
+        TraceFriendFragment fragment = new TraceFriendFragment();
         fragment.setArguments(bundle);
 
         return fragment;

@@ -58,7 +58,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="14dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_user" />
+                    android:src="@drawable/dragonball_goku" />
             </RelativeLayout>
 
             <ListView

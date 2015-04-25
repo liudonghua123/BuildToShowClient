@@ -1,9 +1,10 @@
 package com.buildingtoshow.client.sliding;
 
 import android.support.v4.app.Fragment;
-import com.buildingtoshow.client.fragments.TabOneFragment;
-import com.buildingtoshow.client.fragments.TabThreeFragment;
-import com.buildingtoshow.client.fragments.TabTwoFragment;
+
+import com.buildingtoshow.client.fragments.TraceFriendFragment;
+import com.buildingtoshow.client.fragments.TraceMapFragment;
+import com.buildingtoshow.client.fragments.TraceHistoryFragment;
 
 public class SamplePagerItem {
 	
@@ -19,7 +20,7 @@ public class SamplePagerItem {
         this.mIndicatorColor = indicatorColor;
         this.mDividerColor = dividerColor;
         
-        listFragments = new Fragment[] {TabOneFragment.newInstance(), TabTwoFragment.newInstance(), TabThreeFragment.newInstance()};        
+        listFragments = new Fragment[] {TraceMapFragment.newInstance(), TraceHistoryFragment.newInstance(), TraceFriendFragment.newInstance()};
     }
 
     public Fragment createFragment() {

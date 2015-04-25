@@ -24,7 +24,7 @@
     <style name="LiveoActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="titleTextStyle">@style/Liveo.TitleTextStyle</item>
         <item name="subtitleTextStyle">@style/Liveo.SubTitleTextStyle</item>               
-        <item name="background">@color/green_google_play</item>                
+        <item name="background">@color/purple_light</item>
     </style>
     
     <style name="Liveo.TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
