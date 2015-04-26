@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
 
+import com.baidu.location.BDLocation;
 import com.buildingtoshow.client.utils.Utils;
 
 import java.util.Date;
@@ -32,7 +32,7 @@ public class TraceRecordHelper {
         return mTraceRecordHelper;
     }
 
-    public void insert(Date startDateTime, int distance, int totalTime, List<Location> locations, String snapshotPath) {
+    public void insert(Date startDateTime, int distance, int totalTime, List<BDLocation> locations, String snapshotPath) {
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.TRACE_RECORD_START_DATETIME, Utils.formatDateTime(startDateTime));
         cv.put(DBHelper.TRACE_RECORD_DISTANCE, distance);

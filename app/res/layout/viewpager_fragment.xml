@@ -8,12 +8,19 @@
         android:id="@+id/mTabs"
         android:layout_width="match_parent"
         android:layout_height="48dip"/>    
-                
+    <!--
 	<android.support.v4.view.ViewPager
 	    android:id="@+id/mPager"
           android:layout_width="match_parent"
           android:layout_height="0px"
           android:layout_weight="1"
           android:background="@color/white"/>
+          -->
+    <com.buildingtoshow.client.fragments.CustomViewPager
+        android:id="@+id/mPager"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:background="@color/white"/>
 </LinearLayout>
 

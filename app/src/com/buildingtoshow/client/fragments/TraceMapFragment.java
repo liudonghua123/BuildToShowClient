@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,22 +22,33 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
+import android.widget.ZoomControls;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.offline.MKOfflineMap;
+import com.baidu.mapapi.map.offline.MKOfflineMapListener;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
 import com.buildingtoshow.client.R;
 import com.buildingtoshow.client.db.TraceRecordHelper;
 import com.buildingtoshow.client.utils.Menus;
 import com.buildingtoshow.client.utils.Utils;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -50,17 +58,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-//import com.baidu.mapapi.map.BaiduMap;
-//import com.baidu.mapapi.map.MapView;
-//import com.buildingtoshow.client.R;
-//import com.buildingtoshow.client.utils.Menus;
-
-public class TraceMapFragment extends Fragment implements LocationListener, OnClickListener {
+public class TraceMapFragment extends Fragment implements BDLocationListener, OnClickListener, MKOfflineMapListener {
 
     private static final String LOG_TAG = "TraceMapFragment";
+    public static final int DEFAULT_ZOOM_LEVEL = 18;
 
     // 初始化为空的列表
-    private List<Location> mLocations = new ArrayList<Location>();
+    private List<BDLocation> mLocations = new ArrayList<BDLocation>();
     private List<Marker> mMarkers = new ArrayList<Marker>();
     private List<Polyline> mPolyLines = new ArrayList<Polyline>();
     private LocationManager mLocationManager;
@@ -69,12 +73,13 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
 
     private boolean mIsStartTrace;
     private Date mStartDate;
-    private Location mLastLocation;
+    private BDLocation mLastLocation;
     private long mLastElapsedTimeInSeconds = 0;
     private long mCurrentElapsedTimeInSeconds = 0;
-    private float mLastDistance = 0;
-    private float mCurrentDistance = 0;
-    private float mCurrentSpeed = 0;
+    private double mLastDistance = 0;
+    private double mCurrentDistance = 0;
+    private double mCurrentSpeed = 0;
+    private boolean isFirstLoc = true;
 
     // 用作计时器 http://www.52rd.com/Blog/Detail_RD.Blog_jimbo_lee_49769.html
     private Handler mHandler = new Handler();
@@ -90,8 +95,7 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
 
     private View mRootView;
     private MapView mMapView;
-    private GoogleMap mMap;
-    //private BaiduMap mMap;
+    private BaiduMap mMap;
     private TextView mTextViewDistance;
     private TextView mTextViewElapsedTime;
     private TextView mTextViewSpeed;
@@ -99,7 +103,10 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
     private Button mButtonStart;
     private Button mButtonEnd;
 
+    private LocationClient mLocationClient;
+
     private static final int ONE_SECOND_IN_MILIS = 1000;
+    private MKOfflineMap mOffline;
 
     public static TraceMapFragment newInstance() {
         TraceMapFragment fragment = new TraceMapFragment();
@@ -113,7 +120,6 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
         mRootView = inflater.inflate(R.layout.trace_map, container, false);
 
         mMapView = (MapView) mRootView.findViewById(R.id.map);
-        mMapView.onCreate(savedInstanceState);
 
         setUpMapIfNeeded();
 
@@ -167,55 +173,76 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
         .setHintTextColor(getResources().getColor(R.color.white));		
 	}
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMapView.onResume();
-
-        setUpMapIfNeeded();
-    }
-
     private void setUpMapIfNeeded() {
         if (mMap == null) {
-            // http://stackoverflow.com/questions/19541915/google-maps-cameraupdatefactory-not-initalized
-            // do this in Application
-            //MapsInitializer.initialize(getActivity());
-
-            mMap = ((MapView) mRootView.findViewById(R.id.map)).getMap();
+            MapView mapView = (MapView) mRootView.findViewById(R.id.map);
+//            BaiduMapOptions mapOptions = new BaiduMapOptions();
+//            // 隐藏比例尺控件
+//            mapOptions.scaleControlEnabled(false);
+//            // 隐藏缩放按钮
+//            mapOptions.zoomControlsEnabled(false);
+//            // Terrible MapView design, could not set BaiduMapOptions, unless create a new MapView
+            hideZoomCtler();
+            // use offline map
+            mOffline = new MKOfflineMap();
+            mOffline.init(this);
+            mMap = mapView.getMap();
             if (mMap != null) {
                 setUpMap();
             }
         }
     }
 
+    //隐藏 缩放控件和  百度logo
+    // see http://blog.csdn.net/weizongwei5/article/details/39178243
+    private void hideZoomCtler() {
+        if(mMapView==null) {
+            return;
+        }
+        int count = mMapView.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View child = mMapView.getChildAt(i);
+            // 隐藏百度logo ZoomControl
+            if (child instanceof ImageView || child instanceof ZoomControls) {
+                child.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private void setUpMap() {
-//        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-        mMap.setPadding(0, 0, 0, 150);
+        // 普通地图
+        //mMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+        // 开启定位图层
         mMap.setMyLocationEnabled(true);
 
-        // set LocationListener
-        // Getting LocationManager object from System Service LOCATION_SERVICE
-        mLocationManager = (LocationManager) this.getActivity().getSystemService(this.getActivity().LOCATION_SERVICE);
-        // Creating a criteria object to retrieve provider
-        Criteria criteria = new Criteria();
+        mLocationClient = new LocationClient(this.getActivity().getApplicationContext());
+        mLocationClient.registerLocationListener(this);
 
-//		  // 查询精度：高
-//        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-//        // 是否查询海拨：否
-//        criteria.setAltitudeRequired(false);
-//        // 是否查询方位角 : 否
-//        criteria.setBearingRequired(false);
-//        // 是否允许付费：是
-//        criteria.setCostAllowed(true);
-//        // 电量要求：低
-//        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        LocationClientOption locationOption = new LocationClientOption();
+        // 打开gps
+        locationOption.setOpenGps(true);
+        // 设置坐标类型
+        locationOption.setCoorType("bd09ll");
+        locationOption.setScanSpan(1000);
+        mLocationClient.setLocOption(locationOption);
+        // 开启定位
+        mLocationClient.start();
+        mLocationClient.requestLocation();
 
-        // // 返回最合适的符合条件的 provider ，第 2 个参数为 true 说明 , 如果只有一个 provider 是有效的 , 则返回当前的
-        // 可能的返回值有LocationManager.NETWORK_PROVIDER or LocationManager.GPS_PROVIDER
-        // http://www.cnblogs.com/transmuse/archive/2010/12/31/1923358.html
-        mProvider = mLocationManager.getBestProvider(criteria, true);
-        mLocationManager.requestLocationUpdates(mProvider, 0, 0, this);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Attempt to invoke virtual method 'java.util.ArrayList com.baidu.platform.comapi.map.q.e()' on a null object reference
+                mOffline.importOfflineData();
+            }
+        }, 1000);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+        setUpMapIfNeeded();
     }
 
     @Override
@@ -226,52 +253,55 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
 
     @Override
     public void onDestroy() {
+        // 退出时销毁定位
+        mLocationClient.stop();
+        // 关闭定位图层
+        mMap.setMyLocationEnabled(false);
         mMapView.onDestroy();
+        mMapView = null;
+        mOffline.destroy();
         super.onDestroy();
     }
 
     @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mMapView.onLowMemory();
-    }
+    public void onReceiveLocation(BDLocation location) {
+        if (location == null || mMapView == null) {
+            return;
+        }
+        // 构造定位数据
+        MyLocationData locData = new MyLocationData.Builder()
+                .accuracy(location.getRadius())
+                .direction(100)
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude()).build();
+        // 设置定位数据
+        mMap.setMyLocationData(locData);
+        if (isFirstLoc) {
+            isFirstLoc = false;
+            LatLng latLng = new LatLng(location.getLatitude(),
+                    location.getLongitude());
+            MapStatusUpdate statusUpdate = MapStatusUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_LEVEL);
+            mMap.animateMapStatus(statusUpdate);
+        }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mMapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
         if(!mIsStartTrace) {
             return;
         }
-        // Getting latitude of the current location
-        double latitude = location.getLatitude();
-        // Getting longitude of the current location
-        double longitude = location.getLongitude();
-        // Creating a LatLng object for the current location
-        LatLng latLng = new LatLng(latitude, longitude);
-        // Showing the current location in Google Map
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        // Zoom in the Google Map
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
         // 首次获取到起点位置
         if(mLastLocation == null) {
             mLastLocation = location;
             mLocations.add(location);
             // 绘制起点
-            // https://developers.google.com/maps/documentation/android/marker
-            Marker startMarker = mMap.addMarker(new MarkerOptions()
+            Marker startMarker = (Marker) mMap.addOverlay(new MarkerOptions()
                     .position(Utils.locationToLatLng(location))
                     .title("起点")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st)));
             mMarkers.add(startMarker);
         }
         else {
-            float distanceElapsed = location.distanceTo(mLastLocation);
+            double distanceElapsed = DistanceUtil. getDistance(new LatLng(location.getLatitude(), location.getLongitude()),
+                    new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
             if(distanceElapsed > 10) {
                 mLocations.add(location);
                 // 计算当前速度和距离
@@ -279,13 +309,12 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
                 mCurrentSpeed = distanceElapsed / (mCurrentElapsedTimeInSeconds - mLastElapsedTimeInSeconds);
 
                 // 绘制线条
-                // https://developers.google.com/maps/documentation/android/shapes
-                Polyline polyline = mMap.addPolyline(new PolylineOptions()
-                        .add(Utils.locationToLatLng(mLastLocation))
-                        .add(Utils.locationToLatLng(location))
+                List<LatLng> points = new ArrayList<LatLng>();
+                points.add(Utils.locationToLatLng(mLastLocation));
+                points.add(Utils.locationToLatLng(location));
+                Polyline polyline = (Polyline) mMap.addOverlay(new PolylineOptions().points(points)
                         .width(5)
-                        .color(Color.BLUE)
-                        .geodesic(true));
+                        .color(Color.BLUE));
                 mPolyLines.add(polyline);
 
                 mLastDistance = mCurrentDistance;
@@ -298,22 +327,6 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
             }
 
         }
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @Override
@@ -321,8 +334,6 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
         switch (v.getId()) {
             case R.id.trace_map_button_start:
                 mIsStartTrace = true;
-//                Time currentTime = new Time(Time.getCurrentTimezone());
-//                currentTime.setToNow();
                 mStartDate = Calendar.getInstance(Locale.getDefault()).getTime();
                 // 重置
                 reset();
@@ -332,15 +343,6 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
                 mBottomViewSwitcher.showNext();
                 // 启动计时，记录位置
                 mHandler.post(timerTaskRunable);
-//                // 绘制起点
-//                mLastLocation = mLocationManager.getLastKnownLocation(mProvider);
-//                mLocations.add(mLastLocation);
-//                // https://developers.google.com/maps/documentation/android/marker
-//                Marker startMarker = mMap.addMarker(new MarkerOptions()
-//                        .position(Utils.locationToLatLng(mLastLocation))
-//                        .title("起点")
-//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-//                mMarkers.add(startMarker);
                 break;
             case R.id.trace_map_button_end:
                 mIsStartTrace = false;
@@ -349,10 +351,10 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
                 // 停止计时，记录位置
                 mHandler.removeCallbacks(timerTaskRunable);
                 // 绘制终点
-                Marker endMarker = mMap.addMarker(new MarkerOptions()
+                Marker endMarker = (Marker) mMap.addOverlay(new MarkerOptions()
                         .position(Utils.locationToLatLng(mLastLocation))
                         .title("终点")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en)));
                 mMarkers.add(endMarker);
 
                 // 保存记录
@@ -371,24 +373,22 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
                 dialog.dismiss();
                 // 保存地图快照至图片
                 final String snapshotFilePath = Utils.generateMapSnapshotFilePath(TraceMapFragment.this.getActivity());
-                mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                    public void onMapLoaded() {
-                        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
-                            public void onSnapshotReady(Bitmap bitmap) {
-                                // Write image to disk
-                                FileOutputStream out = null;
-                                try {
-                                    out = new FileOutputStream(snapshotFilePath);
-                                } catch (FileNotFoundException e) {
-                                    Log.e(LOG_TAG, e.getMessage());
-                                }
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                            }
-                        });
+                mMap.snapshot(new BaiduMap.SnapshotReadyCallback() {
+
+                    @Override
+                    public void onSnapshotReady(Bitmap bitmap) {
+                        // Write image to disk
+                        FileOutputStream out = null;
+                        try {
+                            out = new FileOutputStream(snapshotFilePath);
+                        } catch (FileNotFoundException e) {
+                            Log.e(LOG_TAG, e.getMessage());
+                        }
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                     }
                 });
                 mTraceRecordHelper = TraceRecordHelper.getInstance(TraceMapFragment.this.getActivity());
-                mTraceRecordHelper.insert(mStartDate, (int)mCurrentDistance, (int)mCurrentElapsedTimeInSeconds, mLocations, snapshotFilePath);
+                mTraceRecordHelper.insert(mStartDate, (int) mCurrentDistance, (int) mCurrentElapsedTimeInSeconds, mLocations, snapshotFilePath);
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -416,6 +416,11 @@ public class TraceMapFragment extends Fragment implements LocationListener, OnCl
         for(Polyline polyline : mPolyLines) {
             polyline.remove();
         }
+    }
+
+    @Override
+    public void onGetOfflineMapState(int type, int state) {
+
     }
 }
 

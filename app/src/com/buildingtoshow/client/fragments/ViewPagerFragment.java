@@ -1,8 +1,5 @@
 package com.buildingtoshow.client.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,11 +7,15 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.buildingtoshow.client.adapter.ViewPagerAdapter;
+
 import com.buildingtoshow.client.R;
+import com.buildingtoshow.client.adapter.ViewPagerAdapter;
 import com.buildingtoshow.client.sliding.SamplePagerItem;
 import com.buildingtoshow.client.sliding.SlidingTabLayout;
 import com.buildingtoshow.client.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewPagerFragment extends Fragment{
 	private List<SamplePagerItem> mTabs = new ArrayList<SamplePagerItem>();
@@ -36,7 +37,7 @@ public class ViewPagerFragment extends Fragment{
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-    	ViewPager mViewPager = (ViewPager) view.findViewById(R.id.mPager);
+        ViewPager mViewPager = (CustomViewPager) view.findViewById(R.id.mPager);
     	
     	mViewPager.setOffscreenPageLimit(3);
         mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), mTabs);

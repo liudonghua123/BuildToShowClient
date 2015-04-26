@@ -7,7 +7,7 @@
         android:id="@+id/trace_map_header"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
         android:padding="5dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true">
@@ -42,14 +42,14 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/trace_map_distance_default_value"
                     app:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
-                    android:textSize="100dp"
+                    android:textSize="75dp"
                     android:id="@+id/trace_map_text_view_distance" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|bottom"
-                    android:textSize="50dp"
+                    android:textSize="45dp"
                     android:text="@string/trace_map_distance_unit" />
             </LinearLayout>
         </LinearLayout>
@@ -69,7 +69,8 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="15dp"
+                android:textSize="13sp"
                 android:gravity="center_vertical"
                 android:text="@string/trace_map_elapsed_time" />
 
@@ -78,12 +79,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/trace_map_elapsed_time_default_value"
                 app:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
-                android:textSize="35dp"
+                android:textSize="30dp"
                 android:id="@+id/trace_map_text_view_elapsed_time" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="15dp"
+                android:textSize="13sp"
                 android:gravity="center_vertical"
                 android:text="@string/trace_map_speed" />
 
@@ -93,33 +95,17 @@
                 android:gravity="center_vertical"
                 android:text="@string/trace_map_speed_default_value"
                 app:customTypeface="fonts/AvenirNextLTPro-Cn.otf"
-                android:textSize="35dp"
+                android:textSize="30dp"
                 android:id="@+id/trace_map_text_view_speed" />
         </LinearLayout>
     </LinearLayout>
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map"
-        android:layout_below="@id/trace_map_header"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cameraBearing="0"
-        app:cameraTargetLat="24.822910"
-        app:cameraTargetLng="102.853091"
-        app:cameraTilt="0"
-        app:cameraZoom="15"
-        app:mapType="normal"
-        app:uiCompass="true"
-        app:uiZoomControls="true"
-        app:uiZoomGestures="true"/>
-    <!--
     <com.baidu.mapapi.map.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/trace_map_header"
         android:clickable="true" />
-    -->
 
 
     <ViewSwitcher

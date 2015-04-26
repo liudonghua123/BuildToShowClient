@@ -5,8 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 
+import com.baidu.location.BDLocation;
+import com.baidu.mapapi.model.LatLng;
 import com.buildingtoshow.client.R;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -57,12 +58,12 @@ public class Utils {
         return decimalFormat.format(number);
     }
 
-    public static LatLng locationToLatLng(Location location) {
+    public static LatLng locationToLatLng(BDLocation location) {
         return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
-    public static Location latLngToLocation(LatLng latLng) {
-        Location location =  new Location("");
+    public static BDLocation latLngToLocation(LatLng latLng) {
+        BDLocation location =  new BDLocation();
         location.setLatitude(latLng.latitude);
         location.setLongitude(latLng.longitude);
         return location;
@@ -111,10 +112,10 @@ public class Utils {
      * @param locations
      * @return
      */
-    public static String locationsToString(List<Location> locations) {
+    public static String locationsToString(List<BDLocation> locations) {
         double latitude, longitude;
         List<String> latLngPairs = new ArrayList<String>();
-        for(Location location : locations) {
+        for(BDLocation location : locations) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             latLngPairs.add(String.format("%f%s%f", latitude, LATLNG_INNER_DELIMITER, longitude));
