@@ -2,4 +2,5 @@
 <resources>
     <color name="default_divider_color">#4433b5e5</color>
     <color name="default_bg_color">#ffddd0ac</color>
+    <color name="default_btn_bg_translucent">#80FFFFF0</color>
 </resources>

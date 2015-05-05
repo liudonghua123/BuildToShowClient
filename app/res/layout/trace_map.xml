@@ -107,6 +107,17 @@
         android:layout_below="@id/trace_map_header"
         android:clickable="true" />
 
+    <ImageButton
+        android:id="@+id/trace_map_view_location"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/icon_track_mark"
+        android:background="@color/default_btn_bg_translucent"
+        android:scaleType="fitXY"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true" />
 
     <ViewSwitcher
         android:id="@+id/trace_map_view_switcher_bottom"
@@ -121,6 +132,7 @@
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:layout_centerInParent="true"
+                android:background="@color/default_btn_bg_translucent"
                 android:text="@string/trace_map_start"/>
         </RelativeLayout>
         <RelativeLayout
@@ -131,6 +143,7 @@
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:layout_centerInParent="true"
+                android:background="@color/default_btn_bg_translucent"
                 android:text="@string/trace_map_end"/>
         </RelativeLayout>
     </ViewSwitcher>

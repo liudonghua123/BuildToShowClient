@@ -22,6 +22,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -33,6 +34,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
@@ -41,6 +43,8 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.offline.MKOLSearchRecord;
+import com.baidu.mapapi.map.offline.MKOLUpdateElement;
 import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.baidu.mapapi.map.offline.MKOfflineMapListener;
 import com.baidu.mapapi.model.LatLng;
@@ -58,7 +62,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class TraceMapFragment extends Fragment implements BDLocationListener, OnClickListener, MKOfflineMapListener {
+public class TraceMapFragment extends Fragment implements BDLocationListener, OnClickListener, MKOfflineMapListener, BaiduMap.OnMapStatusChangeListener {
 
     private static final String LOG_TAG = "TraceMapFragment";
     public static final int DEFAULT_ZOOM_LEVEL = 18;
@@ -80,6 +84,8 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
     private double mCurrentDistance = 0;
     private double mCurrentSpeed = 0;
     private boolean isFirstLoc = true;
+    private boolean isRequestCurrentLocation = false;
+    private float mCurrentMapZoom = DEFAULT_ZOOM_LEVEL;
 
     // 用作计时器 http://www.52rd.com/Blog/Detail_RD.Blog_jimbo_lee_49769.html
     private Handler mHandler = new Handler();
@@ -102,6 +108,7 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
     private ViewSwitcher mBottomViewSwitcher;
     private Button mButtonStart;
     private Button mButtonEnd;
+    private ImageButton mImageButtonLocation;
 
     private LocationClient mLocationClient;
 
@@ -137,6 +144,7 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
         mBottomViewSwitcher = (ViewSwitcher) mRootView.findViewById(R.id.trace_map_view_switcher_bottom);
         mButtonStart = (Button) mRootView.findViewById(R.id.trace_map_button_start);
         mButtonEnd = (Button) mRootView.findViewById(R.id.trace_map_button_end);
+        mImageButtonLocation = (ImageButton) mRootView.findViewById(R.id.trace_map_view_location);
 
         // Set Animation
         // Can also set in XML using android:inAnimation and android:outAnimation
@@ -149,6 +157,7 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
 
         mButtonStart.setOnClickListener(this);
         mButtonEnd.setOnClickListener(this);
+        mImageButtonLocation.setOnClickListener(this);
     }
 
     @Override
@@ -170,7 +179,7 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
 	    searchView.setQueryHint(this.getString(R.string.search));
 	    
 	    ((EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text))
-        .setHintTextColor(getResources().getColor(R.color.white));		
+        .setHintTextColor(getResources().getColor(R.color.white));
 	}
 
     private void setUpMapIfNeeded() {
@@ -214,6 +223,8 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
         //mMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         // 开启定位图层
         mMap.setMyLocationEnabled(true);
+        mMap.setOnMapStatusChangeListener(this);
+        mMap.getUiSettings().setCompassEnabled(true);
 
         mLocationClient = new LocationClient(this.getActivity().getApplicationContext());
         mLocationClient.registerLocationListener(this);
@@ -233,7 +244,24 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
             @Override
             public void run() {
                 // Attempt to invoke virtual method 'java.util.ArrayList com.baidu.platform.comapi.map.q.e()' on a null object reference
-                mOffline.importOfflineData();
+                int count = mOffline.importOfflineData();
+                ArrayList<MKOLUpdateElement> localMapList = mOffline.getAllUpdateInfo();
+                Log.d(LOG_TAG, String.format("localMapList.size() returns %d", localMapList != null ? localMapList.size() : 0));
+                boolean isKunmingMapAvailable = false;
+                String kunmingCityName = "昆明";
+                if(localMapList != null) {
+                    for(MKOLUpdateElement localMap : localMapList) {
+                        localMap.cityName.startsWith(kunmingCityName);
+                        isKunmingMapAvailable = true;
+                    }
+                }
+                if(!isKunmingMapAvailable) {
+                    ArrayList<MKOLSearchRecord> records = mOffline.searchCity(kunmingCityName);
+                    if (records != null && records.size() > 0) {
+                        mOffline.start(records.get(0).cityID);
+                    }
+                }
+                Log.d(LOG_TAG, String.format("mOffline.importOfflineData() returns %d", count));
             }
         }, 1000);
     }
@@ -276,11 +304,12 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
                 .longitude(location.getLongitude()).build();
         // 设置定位数据
         mMap.setMyLocationData(locData);
-        if (isFirstLoc) {
+        if (isFirstLoc || isRequestCurrentLocation) {
             isFirstLoc = false;
+            isRequestCurrentLocation = false;
             LatLng latLng = new LatLng(location.getLatitude(),
                     location.getLongitude());
-            MapStatusUpdate statusUpdate = MapStatusUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_LEVEL);
+            MapStatusUpdate statusUpdate = MapStatusUpdateFactory.newLatLngZoom(latLng, mCurrentMapZoom);
             mMap.animateMapStatus(statusUpdate);
         }
 
@@ -360,6 +389,12 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
                 // 保存记录
                 showProbablySaveDialog();
                 break;
+            case R.id.trace_map_view_location:
+                if(mLocationClient.isStarted()) {
+                    mLocationClient.requestLocation();
+                    isRequestCurrentLocation = true;
+                }
+                break;
         }
     }
 
@@ -420,6 +455,36 @@ public class TraceMapFragment extends Fragment implements BDLocationListener, On
 
     @Override
     public void onGetOfflineMapState(int type, int state) {
+        switch (type) {
+            case MKOfflineMap.TYPE_DOWNLOAD_UPDATE:
+                MKOLUpdateElement update = mOffline.getUpdateInfo(state);
+                if(update != null) {
+                    Log.d(LOG_TAG, String.format("%s : %d%%", update.cityName,
+                            update.ratio));
+                }
+                break;
+            case MKOfflineMap.TYPE_NEW_OFFLINE:
+                Log.d(LOG_TAG, String.format("add offlinemap num:%d", state));
+                break;
+            case MKOfflineMap.TYPE_VER_UPDATE:
+                Log.d(LOG_TAG, String.format("new offlinemap ver"));
+                break;
+        }
+
+    }
+
+    @Override
+    public void onMapStatusChangeStart(MapStatus mapStatus) {
+
+    }
+
+    @Override
+    public void onMapStatusChange(MapStatus mapStatus) {
+        mCurrentMapZoom = mapStatus.zoom;
+    }
+
+    @Override
+    public void onMapStatusChangeFinish(MapStatus mapStatus) {
 
     }
 }
